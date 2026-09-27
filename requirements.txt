@@ -2,9 +2,3 @@ streamlit
 pandas
 numpy
 matplotlib
-scikit-learn
-torch
-transformers
-datasets
-gensim
-joblib
