@@ -1253,9 +1253,3 @@ elif page == "Acknowledgments":
     )
 
     
-
-    st.dataframe(
-        versions,
-        use_container_width=True,
-        hide_index=True
-    )
