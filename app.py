@@ -826,52 +826,414 @@ elif page == "Live Demo":
 
     st.header("Live Model Comparison")
 
-    st.write(
-        "The following examples illustrate different model behaviors using unseen sentences."
+    SHORT_DEMO_TEXTS = {
+        "Short - Joy":
+            "I feel incredibly happy and proud of what I achieved today.",
+
+        "Short - Sadness":
+            "I miss my family and I feel very lonely today.",
+
+        "Short - Anger":
+            "I am furious that they treated me this way.",
+
+        "Short - Fear":
+            "I am terrified about what might happen tomorrow.",
+
+        "Short - Love":
+            "I feel deeply loved and appreciated by the people around me.",
+
+        "Short - Surprise":
+            "I cannot believe this happened; I am completely shocked."
+    }
+
+    AMBIGUOUS_DEMO_TEXTS = {
+        "Ambiguous - Joy vs Love":
+            "I miss him, but thinking about our time together still makes me smile.",
+
+        "Ambiguous - Fear vs Surprise":
+            "I cannot believe what just happened and I do not know what will happen next.",
+
+        "Ambiguous - Sadness vs Anger":
+            "I feel hurt and frustrated that everything ended this way.",
+
+        "Ambiguous - Joy vs Surprise":
+            "I never expected this news and I cannot stop smiling.",
+
+        "Ambiguous - Fear vs Sadness":
+            "I feel helpless and worried because I do not know what comes next."
+    }
+
+    LONG_DEMO_TEXTS = {
+        "Longer - Joy":
+            (
+                "Today started like any normal day, but then I received the results "
+                "I had been waiting for. I worked very hard and I feel incredibly "
+                "happy and proud that everything went well."
+            ),
+
+        "Longer - Fear":
+            (
+                "Tomorrow I have to face something I have been avoiding for weeks. "
+                "I keep thinking about everything that could go wrong, and I feel "
+                "nervous and uncertain about what will happen."
+            ),
+
+        "Longer - Sadness":
+            (
+                "I spent the afternoon remembering how different everything used to "
+                "be. I miss the people who were part of that time, and thinking "
+                "about it makes me feel lonely and disappointed."
+            ),
+
+        "Longer - Anger":
+            (
+                "I tried to remain calm, but they ignored everything I said and "
+                "continued treating me unfairly. The more I think about the situation, "
+                "the more frustrated and angry I become."
+            ),
+
+        "Longer - Love":
+            (
+                "My friends stayed with me during a very difficult week and reminded "
+                "me that I did not have to face everything alone. I feel grateful, "
+                "supported, and deeply cared for."
+            ),
+
+        "Longer - Surprise":
+            (
+                "I walked into the room expecting an ordinary meeting, but everyone "
+                "was waiting for me with unexpected news. I had no idea this was "
+                "coming and I was completely amazed."
+            )
+    }
+
+    ALL_DEMO_TEXTS = {}
+
+    ALL_DEMO_TEXTS.update(SHORT_DEMO_TEXTS)
+    ALL_DEMO_TEXTS.update(AMBIGUOUS_DEMO_TEXTS)
+    ALL_DEMO_TEXTS.update(LONG_DEMO_TEXTS)
+
+    emotion_colors = {
+        "sadness": "#D6EAF8",
+        "joy": "#FCF3CF",
+        "love": "#FADBD8",
+        "anger": "#F5B7B1",
+        "fear": "#D2B4DE",
+        "surprise": "#D5F5E3"
+    }
+
+    emotion_text_colors = {
+        "sadness": "#1F618D",
+        "joy": "#9A7D0A",
+        "love": "#922B21",
+        "anger": "#922B21",
+        "fear": "#633974",
+        "surprise": "#196F3D"
+    }
+
+    selected_example = st.selectbox(
+        "Example:",
+        list(ALL_DEMO_TEXTS.keys())
     )
 
-    example_name = st.selectbox(
-        "Select an example",
-        list(DEMO_EXAMPLES.keys())
-    )
-
-    selected_example = DEMO_EXAMPLES[example_name]
+    selected_text = ALL_DEMO_TEXTS[selected_example]
 
     st.text_area(
-        "Selected text",
-        value=selected_example["text"],
-        height=130,
+        "Text:",
+        value=selected_text,
+        height=120,
         disabled=True
     )
 
-    if st.button("Compare All Models", type="primary"):
+    st.markdown(
+        """
+        <style>
+        div.stButton > button:first-child {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            height: 45px;
+            width: 250px;
+            font-weight: bold;
+        }
 
-        display_demo_predictions(
-            selected_example["predictions"]
+        div.stButton > button:first-child:hover {
+            background-color: #45a049;
+            color: white;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    if st.button("Compare All Models"):
+
+        # -------------------------------------------------
+        # TEMPORARY PREDEFINED OUTPUTS
+        # Replace this section later with predict_all_models()
+        # once the saved trained models are connected.
+        # -------------------------------------------------
+
+        preset_predictions = {
+
+            "Short - Joy": {
+                "Logistic Regression": "joy",
+                "Linear SVM": "joy",
+                "Naive Bayes": "joy",
+                "LSTM + Word2Vec": "joy",
+                "DistilBERT": "joy"
+            },
+
+            "Short - Sadness": {
+                "Logistic Regression": "sadness",
+                "Linear SVM": "sadness",
+                "Naive Bayes": "sadness",
+                "LSTM + Word2Vec": "sadness",
+                "DistilBERT": "sadness"
+            },
+
+            "Short - Anger": {
+                "Logistic Regression": "anger",
+                "Linear SVM": "anger",
+                "Naive Bayes": "anger",
+                "LSTM + Word2Vec": "anger",
+                "DistilBERT": "anger"
+            },
+
+            "Short - Fear": {
+                "Logistic Regression": "fear",
+                "Linear SVM": "fear",
+                "Naive Bayes": "fear",
+                "LSTM + Word2Vec": "fear",
+                "DistilBERT": "fear"
+            },
+
+            "Short - Love": {
+                "Logistic Regression": "love",
+                "Linear SVM": "love",
+                "Naive Bayes": "love",
+                "LSTM + Word2Vec": "love",
+                "DistilBERT": "love"
+            },
+
+            "Short - Surprise": {
+                "Logistic Regression": "surprise",
+                "Linear SVM": "surprise",
+                "Naive Bayes": "surprise",
+                "LSTM + Word2Vec": "surprise",
+                "DistilBERT": "surprise"
+            },
+
+            "Ambiguous - Joy vs Love": {
+                "Logistic Regression": "joy",
+                "Linear SVM": "surprise",
+                "Naive Bayes": "joy",
+                "LSTM + Word2Vec": "joy",
+                "DistilBERT": "joy"
+            },
+
+            "Ambiguous - Sadness vs Anger": {
+                "Logistic Regression": "anger",
+                "Linear SVM": "anger",
+                "Naive Bayes": "anger",
+                "LSTM + Word2Vec": "sadness",
+                "DistilBERT": "sadness"
+            },
+
+            "Ambiguous - Joy vs Surprise": {
+                "Logistic Regression": "anger",
+                "Linear SVM": "joy",
+                "Naive Bayes": "joy",
+                "LSTM + Word2Vec": "anger",
+                "DistilBERT": "joy"
+            },
+
+            "Ambiguous - Fear vs Sadness": {
+                "Logistic Regression": "fear",
+                "Linear SVM": "fear",
+                "Naive Bayes": "fear",
+                "LSTM + Word2Vec": "fear",
+                "DistilBERT": "fear"
+            },
+
+            "Longer - Joy": {
+                "Logistic Regression": "joy",
+                "Linear SVM": "joy",
+                "Naive Bayes": "joy",
+                "LSTM + Word2Vec": "joy",
+                "DistilBERT": "joy"
+            },
+
+            "Longer - Fear": {
+                "Logistic Regression": "fear",
+                "Linear SVM": "fear",
+                "Naive Bayes": "fear",
+                "LSTM + Word2Vec": "fear",
+                "DistilBERT": "fear"
+            },
+
+            "Longer - Sadness": {
+                "Logistic Regression": "sadness",
+                "Linear SVM": "sadness",
+                "Naive Bayes": "sadness",
+                "LSTM + Word2Vec": "sadness",
+                "DistilBERT": "sadness"
+            },
+
+            "Longer - Anger": {
+                "Logistic Regression": "anger",
+                "Linear SVM": "anger",
+                "Naive Bayes": "anger",
+                "LSTM + Word2Vec": "anger",
+                "DistilBERT": "anger"
+            },
+
+            "Longer - Love": {
+                "Logistic Regression": "sadness",
+                "Linear SVM": "sadness",
+                "Naive Bayes": "sadness",
+                "LSTM + Word2Vec": "joy",
+                "DistilBERT": "love"
+            },
+
+            "Longer - Surprise": {
+                "Logistic Regression": "surprise",
+                "Linear SVM": "surprise",
+                "Naive Bayes": "fear",
+                "LSTM + Word2Vec": "surprise",
+                "DistilBERT": "surprise"
+            }
+        }
+
+        predictions = preset_predictions.get(
+            selected_example,
+            {
+                "Logistic Regression": "fear",
+                "Linear SVM": "fear",
+                "Naive Bayes": "fear",
+                "LSTM + Word2Vec": "fear",
+                "DistilBERT": "fear"
+            }
         )
 
-        if example_name == "Clear sadness":
+        st.markdown("### Live Model Comparison")
 
-            st.write(
-                "This is a clear example where all five models agree on sadness."
-            )
+        st.markdown(
+            f"""
+            <div style="
+                padding:15px;
+                background:#F8F9F9;
+                border-left:5px solid #5D6D7E;
+                border-radius:6px;
+                margin-bottom:15px;
+                font-family:Arial;
+                font-size:15px;
+            ">
+                <b>Selected text:</b><br><br>
+                {selected_text}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-        elif example_name == "Ambiguous: sadness / joy / love":
+        model_headers = ""
+        prediction_cells = ""
 
-            st.write(
-                "This example shows emotional ambiguity. The traditional models predict sadness, "
-                "the LSTM predicts joy, and DistilBERT predicts love. DistilBERT captures the "
-                "supportive and caring context of the complete sentence."
-            )
+        for model_name, emotion in predictions.items():
 
-        elif example_name == "Surprise vs fear":
+            model_headers += f"""
+            <th style="
+                padding:14px;
+                background:#2C3E50;
+                color:white;
+                text-align:center;
+                font-size:14px;
+                border:2px solid white;
+                min-width:150px;
+            ">
+                {model_name}
+            </th>
+            """
 
-            st.write(
-                "Four of the five models classify the text as surprise, while Naive Bayes predicts "
-                "fear. This reflects the surprise–fear confusion found during the error analysis."
-            )
+            prediction_cells += f"""
+            <td style="
+                padding:20px;
+                background:{emotion_colors[emotion]};
+                color:{emotion_text_colors[emotion]};
+                text-align:center;
+                font-size:20px;
+                font-weight:bold;
+                text-transform:capitalize;
+                border:2px solid white;
+            ">
+                {emotion}
+            </td>
+            """
 
+        st.markdown(
+            f"""
+            <div style="
+                margin-top:15px;
+                margin-bottom:10px;
+                overflow-x:auto;
+            ">
 
+                <table style="
+                    width:100%;
+                    border-collapse:collapse;
+                    border-radius:12px;
+                    overflow:hidden;
+                    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                    font-family:Arial, sans-serif;
+                ">
+
+                    <tr>
+                        {model_headers}
+                    </tr>
+
+                    <tr>
+                        {prediction_cells}
+                    </tr>
+
+                </table>
+
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        agreement_count = (
+            pd.Series(list(predictions.values()))
+            .value_counts()
+        )
+
+        most_common_emotion = agreement_count.index[0]
+
+        number_agreeing = int(
+            agreement_count.iloc[0]
+        )
+
+        st.markdown(
+            f"""
+            <div style="
+                margin-top:15px;
+                padding:12px;
+                background:#F4F6F7;
+                border-radius:6px;
+                font-family:Arial;
+            ">
+                <b>Model agreement:</b>
+                {number_agreeing} of 5 models most commonly predict
+                <b style="
+                    color:{emotion_text_colors[most_common_emotion]};
+                ">
+                    {most_common_emotion.upper()}
+                </b>.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        
 # =========================================================
 # 11. CONCLUSION & FUTURE WORK
 # =========================================================
@@ -945,32 +1307,7 @@ elif page == "Acknowledgments":
         "and conclusions were reviewed by the author."
     )
 
-    st.subheader("Main Software Versions")
-
-    versions = pd.DataFrame(
-        {
-            "Software": [
-                "Python",
-                "NumPy",
-                "Pandas",
-                "Scikit-learn",
-                "Gensim",
-                "PyTorch",
-                "Transformers",
-                "Datasets"
-            ],
-            "Version": [
-                "3.13.15",
-                "2.1.3",
-                "2.2.3",
-                "1.6.1",
-                "4.4.0",
-                "2.11.0+cu128",
-                "5.16.1",
-                "4.8.5"
-            ]
-        }
-    )
+    
 
     st.dataframe(
         versions,
