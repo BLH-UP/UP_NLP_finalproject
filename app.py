@@ -1202,6 +1202,76 @@ elif page == "Live Demo":
             unsafe_allow_html=True
         )
 
+        
+
+
+
+
+
+
+
+        # Build the complete prediction table as one HTML block.
+        table_html = """
+        <div style="overflow-x:auto; margin-top:15px; margin-bottom:10px;">
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            font-family:Arial, sans-serif;
+        ">
+            <tr>
+        """
+
+        # Add model names.
+        for model_name in predictions.keys():
+
+            table_html += f"""
+                <th style="
+                    padding:14px;
+                    background-color:#2C3E50;
+                    color:white;
+                    text-align:center;
+                    font-size:14px;
+                    border:1px solid white;
+                ">
+                    {model_name}
+                </th>
+            """
+
+        table_html += """
+            </tr>
+            <tr>
+        """
+
+        # Add predictions.
+        for emotion in predictions.values():
+
+            table_html += f"""
+                <td style="
+                    padding:20px;
+                    background-color:{emotion_colors[emotion]};
+                    color:{emotion_text_colors[emotion]};
+                    text-align:center;
+                    font-size:20px;
+                    font-weight:bold;
+                    border:1px solid white;
+                    text-transform:capitalize;
+                ">
+                    {emotion}
+                </td>
+            """
+
+        table_html += """
+            </tr>
+        </table>
+        </div>
+        """
+
+        st.markdown(
+            table_html,
+            unsafe_allow_html=True
+        )
+
+
         agreement_count = (
             pd.Series(list(predictions.values()))
             .value_counts()
@@ -1233,7 +1303,7 @@ elif page == "Live Demo":
             """,
             unsafe_allow_html=True
         )
-        
+
 # =========================================================
 # 11. CONCLUSION & FUTURE WORK
 # =========================================================
