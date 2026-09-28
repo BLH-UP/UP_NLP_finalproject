@@ -4246,11 +4246,6 @@ print(
     "Main result files saved."
 )
 
-# =========================================================
-# SAVE TRAINED MODEL ARTIFACTS
-# =========================================================
-#The notebook originally kept trained models in memory.
-#For GitHub + Streamlit, the fitted artifacts are saved so app.py can load them without retraining.
 
 print("\nSaving trained model artifacts...")
 
@@ -4345,7 +4340,6 @@ with open(
         indent=2
     )
 
-#Copy the principal experimental tables into the results folder.
 results_df.to_csv(
     "results/final_model_comparison.csv",
     index=False
