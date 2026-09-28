@@ -37,9 +37,8 @@ print(HYPOTHESIS)
 
 
 
-#Step 3
-#Import the required libraries and fix random seeds.
-#Seeds improve reproducibility by reducing variation caused by random sampling and neural-network initialization.
+#Step 2
+#Import the required libraries.
 
 import os
 import re
@@ -110,7 +109,10 @@ from transformers import (
 
 
 
+#Step 3
+#Fix random seeds.
 #Create project output folders.
+
 os.makedirs("models", exist_ok=True)
 os.makedirs("results", exist_ok=True)
 
@@ -139,8 +141,7 @@ if torch.cuda.is_available():
 
 
 #Step 4
-#Describe the dataset source and usage conditions.
-#This information is included because the final project requires a clear description of source, language, licensing/usage conditions, and limitations.
+#Dataset sources.
 
 DATASET_SOURCE = "Hugging Face - dair-ai/emotion"
 
@@ -204,8 +205,7 @@ Ethical considerations:
 
 
 #Step 5
-#Load the complete dataset instead of using a subset.
-#All 20,000 observations are retained because the dataset is manageable and keeping the full sample preserves minority-class observations.
+#Load the dataset.
 
 dataset = load_dataset(
     "dair-ai/emotion",
@@ -217,7 +217,6 @@ print(dataset)
 
 #Step 6
 #Explain the fixed train/validation/test protocol.
-#The validation set is used for tuning, while the test set remains untouched until final evaluation to prevent information leakage.
 
 print("""
 FIXED EXPERIMENTAL PROTOCOL
@@ -237,8 +236,7 @@ This avoids test-set leakage and keeps the final comparison fair.
 
 
 #Step 7
-#Inspect dataset dimensions and variables.
-#Basic EDA is required before preprocessing so we understand the number of observations, variables, and target categories.
+#EDA before preprocessing so we understand the number of observations, variables, and target categories.
 
 label_names = (
     dataset["train"]
@@ -280,7 +278,6 @@ print(
 
 #Step 8
 #Convert the predefined dataset splits to pandas DataFrames.
-#Pandas makes EDA, preprocessing inspection, duplicate control, and error analysis easier to display.
 
 train_df = (
     dataset["train"]
@@ -606,7 +603,6 @@ print(
 
 #Step 13
 #Analyze class distribution and quantify imbalance.
-#A majority-to-minority ratio substantially above 1 indicates that some emotions are represented much more often than others.
 
 class_counts = (
     train_df[
@@ -694,8 +690,7 @@ plt.show()
 
 
 #Step 14
-#Calculate balanced class weights.
-#Minority emotions receive larger loss weights so neural models do not optimize mainly for the most frequent classes.
+#Calculate balanced class weights (class_weight="balanced").
 
 classes = np.arange(
     len(label_names)
@@ -731,7 +726,6 @@ display(
 
 
 #Step 15
-#Analyze text length.
 #Word-count statistics help determine reasonable sequence lengths for LSTM padding and Transformer truncation.
 
 for df in [
@@ -790,7 +784,6 @@ plt.show()
 
 #Step 16
 #Show representative examples from every emotion.
-#Human-readable examples help identify semantic overlap before evaluating model errors.
 
 for emotion in label_names:
 
@@ -829,7 +822,6 @@ for emotion in label_names:
 
 
 #Step 17
-#Demonstrate preprocessing visually.
 #Traditional ML and Word2Vec benefit from normalized text, but aggressive normalization is avoided because negation and emotional wording may contain important information.
 
 demo_text = (
@@ -1079,7 +1071,6 @@ display(
 
 
 #Step 21
-#Create the target arrays shared by every model.
 #Using identical labels and final splits ensures that all final results are directly comparable.
 
 y_train = (
@@ -1125,7 +1116,6 @@ print(
 
 #Step 22
 #Create the TF-IDF representation.
-#TF-IDF is selected because traditional classifiers cannot use raw text directly and TF-IDF captures term importance while reducing the influence of words common across many documents.
 
 print("""
 TF-IDF CONCEPT
@@ -1204,7 +1194,6 @@ print(
 
 #Step 23
 #Show a real TF-IDF example.
-#Displaying individual term weights makes the representation interpretable rather than treating vectorization as a black box.
 
 example_index = 0
 
@@ -1274,10 +1263,6 @@ display(
 
 
 #Step 24
-#Modeling Overview
-#Logistic Regression, Linear SVM, and Multinomial Naive Bayes use TF-IDF; LSTM uses Word2Vec embeddings learned from the training corpus; DistilBERT uses pretrained contextual Transformer representations.
-#This design compares statistical, neural-sequential, and pretrained contextual NLP approaches using the same final test set.
-
 
 #Step 25
 #Create a common evaluation function.
@@ -1753,7 +1738,7 @@ display(
 
 #Step 32
 #Create learning curves for the three traditional models.
-#Traditional classifiers do not train over epochs, so their learning curves show validation Macro-F1 as progressively more training observations are used.
+
 
 traditional_models = {
     "Logistic Regression": (
@@ -2308,7 +2293,6 @@ test_lstm_loader = (
 
 #Step 39
 #Define the corrected Word2Vec + LSTM classifier.
-#Packed sequences explicitly ignore padded positions, preventing the final LSTM state from being influenced by artificial PAD tokens.
 
 class Word2VecLSTMClassifier(
     nn.Module
@@ -2827,7 +2811,6 @@ display(
 
 #Step 43
 #Select a DistilBERT sequence length from training-data token lengths.
-#The 95th percentile balances information retention and computational efficiency.
 
 sample_for_length = (
     train_df[
@@ -2988,8 +2971,7 @@ bert_test_dataset = (
 
 
 #Step 45
-#Create dynamically padded DistilBERT batches.
-#Dynamic padding avoids padding every observation to the global maximum sequence length.
+#Create DistilBERT batches.
 
 bert_data_collator = (
     DataCollatorWithPadding(
